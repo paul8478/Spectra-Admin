@@ -35,7 +35,7 @@ async function updateAttendanceStatus(docId, currentStatus) {
     try {
         const docRef = doc(db, "registrations", docId);
         await updateDoc(docRef, {
-            attendence: currentStatus === "Yes" ? "No" : "Yes" // Note: "attendence" might be a typo, should be "attendance"
+            attendance: currentStatus === "Yes" ? "No" : "Yes"
         });
         fetchUsers(); // Refresh the data
     } catch (error) {
@@ -92,7 +92,7 @@ async function fetchUsers(filter = "All") {
             if (!showRow) return;
 
             const paidButtonText = user.paid === "Yes" ? "Unpaid" : "Paid";
-            const attendanceButtonText = user.attendence === "Yes" ? "Absent" : "Present";
+            const attendanceButtonText = user.attendance === "Yes" ? "Absent" : "Present";
 
             const rowHTML = `
                 <tr>
@@ -104,12 +104,12 @@ async function fetchUsers(filter = "All") {
                     <td>${user.department1 || "N/A"}<br>${user.department2 || "N/A"}</td>
                     <td>${user.paymentMethod || "N/A"}<br>${user.transactionId || "N/A"}</td>
                     <td>${user.paid || "N/A"}</td>
-                    <td>${user.attendence || "N/A"}</td>
+                    <td>${user.attendance || "N/A"}</td>
                     ${fullTableBody ? `
                     <td>
                         <button class="paid-btn" data-id="${docId}" data-status="${user.paid || "No"}">${paidButtonText}</button><br>
-                        <button class="Unpaid-btn" data-id="${docId}" data-status="${user.attendence || "No"}">${attendanceButtonText}</button><br>
-                        <button class="dele-btn" data-id="${docId}" data-team="${user.teamName || "N/A"}">Delete</button>
+                        <button class="attendance-btn" data-id="${docId}" data-status="${user.attendance || "No"}">${attendanceButtonText}</button><br>
+                        <button class="delete-btn" data-id="${docId}" data-team="${user.teamName || "N/A"}">Delete</button>
                     </td>` : ""}
                 </tr>
             `;
@@ -152,8 +152,8 @@ function addButtonEventListeners() {
 
 // Search function based on team name for index.html, broader search for other pages
 async function searchUsers(searchTerm) {
-    const fullTableBody = document.getElementById("userTable"); // For index.html
-    const filteredTableBody = document.getElementById("filteredUserTable"); // For filter.html
+    const fullTableBody = document.getElementById("userTable");
+    const filteredTableBody = document.getElementById("filteredUserTable");
     const mckvCountEl = document.getElementById("mckvCount");
     const othersCountEl = document.getElementById("othersCount");
     const totalCount = document.getElementById("totalCount");
@@ -162,7 +162,7 @@ async function searchUsers(searchTerm) {
     if (!targetTableBody) return;
 
     if (!searchTerm.trim()) {
-        fetchUsers(); // Show all if search is empty
+        fetchUsers();
         return;
     }
 
@@ -177,14 +177,11 @@ async function searchUsers(searchTerm) {
             const user = docSnap.data();
             const docId = docSnap.id;
 
-            // Determine search scope based on page context
             let matchesSearch = false;
             if (fullTableBody) {
-                // For index.html: Search only by team name
                 const teamName = (user.teamName || "").toLowerCase();
                 matchesSearch = teamName.includes(searchTerm.toLowerCase());
             } else {
-                // For other pages: Broader search (team name, email, phone)
                 const searchableText = `
                     ${user.teamName || ""}
                     ${user.email1 || ""}
@@ -205,7 +202,7 @@ async function searchUsers(searchTerm) {
             else othersCount++;
 
             const paidButtonText = user.paid === "Yes" ? "Unpaid" : "Paid";
-            const attendanceButtonText = user.attendence === "Yes" ? "Absent" : "Present";
+            const attendanceButtonText = user.attendance === "Yes" ? "Absent" : "Present";
 
             const rowHTML = `
                 <tr>
@@ -217,12 +214,12 @@ async function searchUsers(searchTerm) {
                     <td>${user.department1 || "N/A"}<br>${user.department2 || "N/A"}</td>
                     <td>${user.paymentMethod || "N/A"}<br>${user.transactionId || "N/A"}</td>
                     <td>${user.paid || "N/A"}</td>
-                    <td>${user.attendence || "N/A"}</td>
+                    <td>${user.attendance || "N/A"}</td>
                     ${fullTableBody ? `
                     <td>
                         <button class="paid-btn" data-id="${docId}" data-status="${user.paid || "No"}">${paidButtonText}</button><br>
-                        <button class="attendance-btn" data-id="${docId}" data-status="${user.attendence || "No"}">${attendanceButtonText}</button><br>
-                        <button class="delete-btn" data-id="${docId}" data-team="${user.teamName || "N/A"}">Delete</button>
+                        <button class="attendance-btn" data-id="${docId}" data-status="${user.attendance || "No"}">${attendanceButtonText}</button><br>
+                        <button class="dele-btn" data-id="${docId}" data-team="${user.teamName || "N/A"}">Delete</button>
                     </td>` : ""}
                 </tr>
             `;
@@ -321,7 +318,7 @@ async function generateCSVData() {
             "Payment Method": user.paymentMethod || "",
             "Transaction ID": user.transactionId || "",
             "Paid": user.paid || "",
-            "Attendance": user.attendence || ""
+            "Attendance": user.attendance || ""
         };
 
         if (isMckv) mckvData.push(row);
