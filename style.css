@@ -373,7 +373,7 @@ td {
     padding: 2px;
     width: 50px;
 }
-.Unpaid-btn{
+.attendence-btn{
     border: none;
     background-color: rgb(58, 187, 238);
     color: white;
@@ -382,7 +382,7 @@ td {
     margin-top: 5px;
 
 }
-.dele-btn{
+.delete-btn{
     border: none;
     background-color: rgb(244, 28, 28);
     color: white;
